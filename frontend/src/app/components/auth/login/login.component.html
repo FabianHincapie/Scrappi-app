@@ -1,0 +1,59 @@
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-sm p-4" style="max-width: 380px; width: 100%; border: none; background: #f8f9fa">
+    <div class="text-center mb-4">
+      <h1 class="h3 mb-3 fw-normal">Bienvenido a <strong>sCrappi</strong></h1>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control"
+          id="floatingInput"
+          formControlName="documento"
+          [ngClass]="{ 'is-invalid': f['documento'].touched && f['documento'].errors }"
+          placeholder="Documento"
+        />
+        <label for="floatingInput">Documento</label>
+        <div *ngIf="f['documento'].touched && f['documento'].errors" class="invalid-feedback">
+          <small *ngIf="f['documento'].errors?.['required']">El documento es obligatorio.</small>
+          <small *ngIf="f['documento'].errors?.['pattern']">Solo se permiten números.</small>
+        </div>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input
+          type="password"
+          class="form-control"
+          id="floatingPassword"
+          formControlName="password"
+          [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }"
+          placeholder="Contraseña"
+        />
+        <label for="floatingPassword">Contraseña</label>
+        <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+          <small *ngIf="f['password'].errors?.['required']">La contraseña es obligatoria.</small>
+          <small *ngIf="f['password'].errors?.['minlength']">Mínimo 8 caracteres.</small>
+        </div>
+      </div>
+
+      <div class="checkbox mb-3 text-start">
+        <label> 
+          <input type="checkbox" formControlName="remember" /> Recordarme (PWA) 
+        </label>
+      </div>
+
+      <button 
+        class="w-100 btn btn-lg btn-dark shadow-sm" 
+        type="submit" 
+        [disabled]="loginForm.invalid">
+        Ingresar
+      </button>
+
+      <div class="mt-3 text-center">
+        <small>¿No tienes cuenta? <a routerLink="/register" class="text-decoration-none">Regístrate aquí</a></small>
+      </div>
+    </form>
+  </div>
+</div>
