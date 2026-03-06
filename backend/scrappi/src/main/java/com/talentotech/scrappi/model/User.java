@@ -23,6 +23,8 @@ public class User {
     @Column(nullable=false,unique=true)
     private Long document;
     @Column(nullable=false,unique=true)
+    private String username;
+    @Column(nullable=false,unique=true)
     private Long phone;
     @Column(nullable=false,unique=true)
     private String name;
@@ -115,6 +117,14 @@ public class User {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
 

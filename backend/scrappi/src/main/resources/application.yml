@@ -1,15 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/db_scrappi #Aqui falta normalizar la BD
+    url: jdbc:postgresql://localhost:5433/db_scrappi #Aqui falta normalizar la BD
     # definir DBA y control de user
-    username:
-    password:
-
-#Por definir User para API
-  security:
-    user:
-      name: admin
-      password: #
+    username: postgres
+    password: 123456
 
   jpa:
     hibernate:
@@ -21,6 +15,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8080
+  port: 8081
   error:
     include-message: always
