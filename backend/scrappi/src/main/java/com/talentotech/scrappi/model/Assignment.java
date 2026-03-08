@@ -1,5 +1,8 @@
 package com.talentotech.scrappi.model;
-import java.security.Timestamp;
+
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,47 +12,39 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "assignment")
-       
 public class Assignment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"assignments", "alerts", "sessions", "workLogs"})
     private User user;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "workstation_id", nullable = false)
+    @JsonIgnoreProperties({"assignments", "workLogs"})
     private WorkStation workStation;
 
-    @Column(nullable = false)
-    private Timestamp start_date;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
 
     @Column(nullable = false)
     private String status;
 
-    public Assignment() {}
+    public Assignment() {
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public User getUser() {
@@ -60,12 +55,28 @@ public class Assignment {
         this.user = user;
     }
 
-    public Timestamp getStart_date() {
-        return start_date;
+    public WorkStation getWorkStation() {
+        return workStation;
     }
 
-    public void setStart_date(Timestamp start_date) {
-        this.start_date = start_date;
+    public void setWorkStation(WorkStation workStation) {
+        this.workStation = workStation;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public String getStatus() {
@@ -75,7 +86,4 @@ public class Assignment {
     public void setStatus(String status) {
         this.status = status;
     }
-
-
-
 }

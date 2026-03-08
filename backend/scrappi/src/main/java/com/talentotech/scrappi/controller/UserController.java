@@ -16,6 +16,8 @@ import com.talentotech.scrappi.dto.LoginRequest;
 import com.talentotech.scrappi.model.User;
 import com.talentotech.scrappi.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/users")
 
@@ -50,11 +52,9 @@ public class UserController {
 
     }
 
-
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        String response = userService.login(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+        return ResponseEntity.ok(userService.login(request, httpRequest));
     }
     
     

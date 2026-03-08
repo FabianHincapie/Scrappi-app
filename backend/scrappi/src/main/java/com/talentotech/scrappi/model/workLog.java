@@ -1,9 +1,10 @@
 package com.talentotech.scrappi.model;
-import java.security.Timestamp;
+
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,115 +15,54 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-
-
 @Entity
-@Table(name = "workLog")
+@Table(name = "worklog")
+public class WorkLog {
 
-
-public class workLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"workLogs", "alerts", "assignments", "sessions"})
     private User user;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "workstation_id", nullable = false)
+    @JsonIgnoreProperties({"workLogs", "assignments"})
     private WorkStation workStation;
 
-    @Column(nullable = false)
-    private Timestamp hour_check_in;
+    @Column(name = "hour_check_in", nullable = false)
+    private LocalDateTime hourCheckIn;
 
-    @Column(nullable = false)
-    private Timestamp hour_check_out;
+    @Column(name = "hour_check_out")
+    private LocalDateTime hourCheckOut;
 
-    @Column(nullable = false)
-    private double longitude_in;
+    @Column(name = "longitude_in", nullable = false)
+    private Double longitudeIn;
 
-    @Column(nullable = false)
-    private double latitude_out;
+    @Column(name = "latitude_in", nullable = false)
+    private Double latitudeIn;
 
-    @Column(nullable = false)
-    private double longitude_out;
+    @Column(name = "longitude_out")
+    private Double longitudeOut;
 
-    @Column(nullable = false)
-    private double latitude_in;
+    @Column(name = "latitude_out")
+    private Double latitudeOut;
 
     @CreationTimestamp
-    @Column(name="created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    @UpdateTimestamp
-    @Column(name = "update_at")
-    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private Boolean complete;
+    private Boolean complete = false;
+
+    public WorkLog() {
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Timestamp getHour_check_in() {
-        return hour_check_in;
-    }
-
-    public void setHour_check_in(Timestamp hour_check_in) {
-        this.hour_check_in = hour_check_in;
-    }
-
-    public double getLongitude_in() {
-        return longitude_in;
-    }
-
-    public void setLongitude_in(double longitude_in) {
-        this.longitude_in = longitude_in;
-    }
-
-    public double getLatitude_out() {
-        return latitude_out;
-    }
-
-    public void setLatitude_out(double latitude_out) {
-        this.latitude_out = latitude_out;
-    }
-
-    public double getLongitude_out() {
-        return longitude_out;
-    }
-
-    public void setLongitude_out(double longitude_out) {
-        this.longitude_out = longitude_out;
-    }
-
-    public double getLatitude_in() {
-        return latitude_in;
-    }
-
-    public void setLatitude_in(double latitude_in) {
-        this.latitude_in = latitude_in;
-    }
-
-    public Boolean getComplete() {
-        return complete;
-    }
-
-    public void setComplete(Boolean complete) {
-        this.complete = complete;
-    }
-
-    public WorkStation getWorkStation() {
-        return workStation;
-    }
-
-    public void setWorkStation(WorkStation workStation) {
-        this.workStation = workStation;
     }
 
     public User getUser() {
@@ -133,7 +73,71 @@ public class workLog {
         this.user = user;
     }
 
+    public WorkStation getWorkStation() {
+        return workStation;
+    }
 
+    public void setWorkStation(WorkStation workStation) {
+        this.workStation = workStation;
+    }
 
+    public LocalDateTime getHourCheckIn() {
+        return hourCheckIn;
+    }
 
+    public void setHourCheckIn(LocalDateTime hourCheckIn) {
+        this.hourCheckIn = hourCheckIn;
+    }
+
+    public LocalDateTime getHourCheckOut() {
+        return hourCheckOut;
+    }
+
+    public void setHourCheckOut(LocalDateTime hourCheckOut) {
+        this.hourCheckOut = hourCheckOut;
+    }
+
+    public Double getLongitudeIn() {
+        return longitudeIn;
+    }
+
+    public void setLongitudeIn(Double longitudeIn) {
+        this.longitudeIn = longitudeIn;
+    }
+
+    public Double getLatitudeIn() {
+        return latitudeIn;
+    }
+
+    public void setLatitudeIn(Double latitudeIn) {
+        this.latitudeIn = latitudeIn;
+    }
+
+    public Double getLongitudeOut() {
+        return longitudeOut;
+    }
+
+    public void setLongitudeOut(Double longitudeOut) {
+        this.longitudeOut = longitudeOut;
+    }
+
+    public Double getLatitudeOut() {
+        return latitudeOut;
+    }
+
+    public void setLatitudeOut(Double latitudeOut) {
+        this.latitudeOut = latitudeOut;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
+    }
 }

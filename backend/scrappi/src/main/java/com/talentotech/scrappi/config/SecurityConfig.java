@@ -23,6 +23,11 @@ public class SecurityConfig {
         .requestMatchers("/api/users/{id}").permitAll()
          .requestMatchers("/api/users").permitAll()
         .requestMatchers("/api/users/login").permitAll()
+        .requestMatchers("/api/workstation").permitAll()
+        .requestMatchers("/api/sessions/**").permitAll()
+        .requestMatchers("/api/alerts/**").permitAll()
+        .requestMatchers("/api/worklogs/**").permitAll()
+        .requestMatchers("/api/assignments/**").permitAll()
         .anyRequest().authenticated())
         .formLogin(form -> form.disable())
         .httpBasic(basic -> basic.disable());

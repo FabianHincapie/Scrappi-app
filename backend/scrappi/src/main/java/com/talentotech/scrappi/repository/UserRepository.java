@@ -8,6 +8,6 @@ import com.talentotech.scrappi.model.User;
 
 
 public interface  UserRepository extends JpaRepository<User, Long>{
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUserName(String userName);
 
 }
