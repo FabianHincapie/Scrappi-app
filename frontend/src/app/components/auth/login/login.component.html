@@ -1,6 +1,8 @@
-
 <div class="container d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-sm p-4" style="max-width: 380px; width: 100%; border: none; background: #f8f9fa">
+  <div
+    class="card shadow-sm p-4"
+    style="max-width: 380px; width: 100%; border: none; background: #f8f9fa"
+  >
     <div class="text-center mb-4">
       <h1 class="h3 mb-3 fw-normal">Bienvenido a <strong>sCrappi</strong></h1>
     </div>
@@ -39,20 +41,22 @@
       </div>
 
       <div class="checkbox mb-3 text-start">
-        <label> 
-          <input type="checkbox" formControlName="remember" /> Recordarme (PWA) 
-        </label>
+        <label> <input type="checkbox" formControlName="remember" /> Recordarme (PWA) </label>
       </div>
 
-      <button 
-        class="w-100 btn btn-lg btn-dark shadow-sm" 
-        type="submit" 
-        [disabled]="loginForm.invalid">
+      <button
+        class="w-100 btn btn-lg btn-dark shadow-sm"
+        type="submit"
+        [disabled]="loginForm.invalid"
+      >
         Ingresar
       </button>
 
       <div class="mt-3 text-center">
-        <small>¿No tienes cuenta? <a routerLink="/register" class="text-decoration-none">Regístrate aquí</a></small>
+        <small
+          >¿No tienes cuenta?
+          <a routerLink="/register" class="text-decoration-none">Regístrate aquí</a></small
+        >
       </div>
     </form>
   </div>

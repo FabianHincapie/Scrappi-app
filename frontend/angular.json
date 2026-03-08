@@ -8,7 +8,13 @@
   "projects": {
     "frontend": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "skipTests": false,
+          "style": "css",
+          "displayBlock": true
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -28,13 +34,9 @@
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css"
-          
             ],
-            "scripts": [
-            ],
-            "polyfills": [
-              "@angular/localize/init"
-            ]
+            "scripts": [],
+            "polyfills": ["@angular/localize/init"]
           },
           "configurations": {
             "production": {
