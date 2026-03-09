@@ -42,3 +42,22 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+
+# Environment variables
+.env
+.env.*
+
+# Spring Boot local config
+application-local.yml
+application-local.properties
+
+# Java / Maven
+/target/
+*.log
+
+# OS
+.DS_Store
+
+# Node (extra seguridad)
+/node_modules

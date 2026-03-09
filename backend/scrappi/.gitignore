@@ -35,3 +35,23 @@ build/
 ### Credenciales BD###
 .env
 src/main/resources/application-local.yml
+
+
+# Environment variables
+.env
+.env.*
+
+# Spring Boot local config
+application-local.yml
+application-local.properties
+
+# Java / Maven
+/target/
+*.log
+
+# OS
+.DS_Store
+
+# Node (extra seguridad)
+/node_modules
+
