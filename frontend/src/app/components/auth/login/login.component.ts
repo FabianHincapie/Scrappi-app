@@ -10,6 +10,7 @@ import { AuthService } from '../../../services/auth/auth.service'; // 👈 Neces
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
