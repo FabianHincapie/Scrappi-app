@@ -28,13 +28,13 @@ public class User {
     private Long document;
     @Column(nullable=false,unique=true)
     private String userName;
-    @Column(nullable=false,unique=true)
+    @Column(nullable=false,unique=false)
     private Long phone;
-    @Column(nullable=false,unique=true)
+    @Column(nullable=false,unique=false)
     private String name;
-    @Column(nullable=false, unique=true)
+    @Column(nullable=false, unique=false)
     private String lastName;
-    @Column(nullable=false, unique=true)
+    @Column(nullable=false, unique=false)
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
