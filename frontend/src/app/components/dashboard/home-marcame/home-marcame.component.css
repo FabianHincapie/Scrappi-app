@@ -47,3 +47,14 @@
   background: #e0e0e0;
   border-radius: 10px;
 }
+
+/* 🆕 NUEVO CAMBIO: Estilo obligatorio para Leaflet */
+#map {
+  height: 250px; /* Altura obligatoria o no se verá nada */
+  width: 100%;
+  border-radius: 20px;
+  border: 2px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  z-index: 1;
+  margin-bottom: 15px;
+}

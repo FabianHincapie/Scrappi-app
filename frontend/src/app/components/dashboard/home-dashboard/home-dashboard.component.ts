@@ -27,6 +27,7 @@ export class HomeDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
   @ViewChild('cumplimientoChart') cumplimientoChart!: ElementRef;
 
   nombreUsuario = '';
+  apellidoUsuario = '';
   lastEvent = 'Cargando...';
   locationStatus = 'Localizando...';
   alertasPendientes = 0;
@@ -45,6 +46,8 @@ export class HomeDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
     const user = this.authService.getUser();
     if (user) {
       this.nombreUsuario = user.name;
+      this.apellidoUsuario = user.lastName;
+
       // Forzamos que el ID sea numérico para evitar errores en la URL
       this.cargarResumen(Number(user.id));
     }
@@ -65,40 +68,26 @@ export class HomeDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
   cargarResumen(userId: number) {
     this.http.get<any>(`http://localhost:8080/api/worklogs/summary/${userId}`).subscribe({
       next: (data) => {
-        // 1. Mapeo seguro de variables
-        this.lastEvent = data.lastEvent || data.lastevent || 'Sin registros';
-        this.locationStatus = data.locationStatus || data.locationstatus || 'Desconocido';
+        this.lastEvent = data.lastEvent || 'Sin registros';
+        this.locationStatus = data.locationStatus || 'Desconocido';
+        this.alertasPendientes = data.alertsToday || 0;
+        this.isInside = data.inside || false;
 
-        // Manejo de alertas (priorizando camelCase)
-        this.alertasPendientes =
-          data.alertsToday !== undefined ? data.alertsToday : data.alertstoday || 0;
-
-        // Manejo de estado de jornada (priorizando el que se vio en  consola: 'inside')
-        this.isInside = data.inside !== undefined ? data.inside : data.isInside || false;
-
-        // 2. Renderizado del gráfico (solo si hay datos nuevos)
-        // Nota: Si el array viene vacío o no viene, dejamos los datos estáticos por ahora
-        if (
-          data.weeklyProgress &&
-          Array.isArray(data.weeklyProgress) &&
-          data.weeklyProgress.length > 0
-        ) {
+        // 🆕 NUEVO CAMBIO: Renderizar el gráfico con datos REALES del backend
+        if (data.weeklyProgress && Array.isArray(data.weeklyProgress)) {
           this.renderChart(data.weeklyProgress);
         } else {
-          // Opcional: Si quieres datos por defecto cuando no hay registros reales:
-          // this.renderChart([0, 0, 0, 0, 0, 0, 0]);
+          this.renderChart([0, 0, 0, 0, 0, 0, 0]); // Fallback si no hay data
         }
 
-        // 3. Un solo renderizado para actualizar la vista completa
-        this.cdr.detectChanges();
+        this.cdr.detectChanges(); // 🆕 NUEVO CAMBIO: Forzar pintado de las barras
       },
       error: (err) => {
         console.error('Error cargando resumen', err);
-        this.lastEvent = 'Error de conexión';
-        this.locationStatus = 'Servidor Offline';
         this.cdr.detectChanges();
       },
     });
+  
   }
 
   //Renderchar

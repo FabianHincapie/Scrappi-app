@@ -4,6 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WorklogService } from '../../../services/worklog/worklog.service';
 import { AuthService } from '../../../services/auth/auth.service';
 
+import * as L from 'leaflet';
+
 @Component({
   selector: 'app-home-marcame',
   standalone: true,
@@ -18,7 +20,7 @@ export class HomeMarcameComponent implements OnInit {
   jornadaActiva: boolean = false;
   idMarcajeActual: number | null = null; // Para el PUT de salida
   historialMarcajes: any[] = []; // 👈 Agrega esta línea
-
+  map: any;
   // --- Datos del Usuario y Alertas ---
   usuarioSesion: any = null;
   mostrarAlertaExito: boolean = false;
@@ -66,6 +68,40 @@ export class HomeMarcameComponent implements OnInit {
     }, 1000);
   }
 
+private initMap() {
+  const mapContainer = document.getElementById('map');
+  
+  // 1. Verificación de seguridad
+  if (!mapContainer || this.map) {
+    return; 
+  }
+
+  // 2. Inicializar el objeto mapa
+  this.map = L.map('map').setView([this.puestoLat, this.puestoLon], 16);
+
+  // 3. 🆕 IMPORTANTE: Añadir la capa de imágenes (Tiles)
+  // Sin esto, el mapa siempre será gris porque no tiene "dibujos"
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(this.map);
+
+  // 4. 🆕 Añadir el círculo de la Geovalla (Sabaneta)
+  L.circle([this.puestoLat, this.puestoLon], {
+    color: '#0d6efd',
+    fillColor: '#0d6efd',
+    fillOpacity: 0.2,
+    radius: 100 // Radio en metros
+  }).addTo(this.map);
+
+  // 5. 🆕 EL TRUCO FINAL: Forzar el renderizado
+  // Esto arregla el problema del cuadro gris definitivamente
+  setTimeout(() => {
+    this.map.invalidateSize();
+    this.cdRef.detectChanges();
+    console.log("✅ Mapa renderizado con éxito");
+  }, 800);
+}
+
   private cargarConfiguracionGeovalla() {
     // Consultamos la estación 1 (Sabaneta) de forma dinámica
     this.worklogService.obtenerConfiguracionEstacion(1).subscribe({
@@ -73,6 +109,7 @@ export class HomeMarcameComponent implements OnInit {
         this.puestoLat = estacion.latitude;
         this.puestoLon = estacion.longitude;
         this.radioMaximo = estacion.radio_meter || 0.001;
+        this.initMap();
         this.ubicacionEstado = 'GPS Listo (Geovalla Activa)';
         console.log('📍 Configuración de geovalla cargada:', estacion.name);
         this.cdRef.detectChanges();
@@ -193,7 +230,6 @@ export class HomeMarcameComponent implements OnInit {
     if (this.usuarioSesion) {
       this.worklogService.obtenerHistorialPorUsuario(this.usuarioSesion.id).subscribe({
         next: (logs) => {
-          // Ordenamos por los más recientes y tomamos 5
           this.historialMarcajes = logs.sort((a: any, b: any) => b.id - a.id).slice(0, 5);
           this.cdRef.detectChanges();
         },
