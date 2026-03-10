@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/alerts/**").permitAll()
                         .requestMatchers("/api/worklogs/**").permitAll()
                         .requestMatchers("/api/assignments/**").permitAll()
+                        .requestMatchers("/api/worklogs/summary/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
