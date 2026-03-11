@@ -60,8 +60,8 @@ export class LoginComponent implements OnInit {
 
     // 2. Armamos el DTO para el Backend (coincidiendo con LoginRequest.java)
     const loginRequest = {
-      identifier: String(document).trim(), // Enviamos el documento como identificador
-      password: password,
+      identifier: String(this.loginForm.value.document).trim(),
+      password: this.loginForm.value.password,
     };
 
     // 3. Llamamos al endpoint de Login real

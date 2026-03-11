@@ -5,11 +5,7 @@ public class LoginRequest {
     private String password;
 
     // Constructores
-    public LoginRequest() {}
-
-    public LoginRequest(String identifier, String password) {
-        this.identifier = identifier;
-        this.password = password;
+    public LoginRequest() {
     }
 
     // Getters y Setters (Súper importantes para que Spring pueda leer el JSON)

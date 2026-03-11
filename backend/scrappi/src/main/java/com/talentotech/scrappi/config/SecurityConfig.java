@@ -32,8 +32,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 2. TUS RUTAS ORIGINALES SE QUEDAN IGUAL
                         // .requestMatchers("/api/users/{id}").permitAll()
-                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/workstation/**").permitAll()
                         .requestMatchers("/api/sessions/**").permitAll()
                         .requestMatchers("/api/alerts/**").permitAll()
@@ -51,7 +51,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Tu Angular
+        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // Angular
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

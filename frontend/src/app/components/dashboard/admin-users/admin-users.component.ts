@@ -25,7 +25,8 @@ export class AdminUsersComponent implements OnInit {
   listaOriginal: User[] = [];
   listaFiltrada: User[] = [];
   isLoading: boolean = true;
-
+  isEditing: boolean = false;
+  userIdToEdit: number | null = null;
   // Historial estático (se mantiene nombre como propiedad visual del log)
   historialOriginal = [
     {
@@ -106,36 +107,122 @@ export class AdminUsersComponent implements OnInit {
   }
 
   abrirModalNuevo(content: any) {
+    this.isEditing = false; // 👈 Volvemos a modo "Creación"
+    this.userIdToEdit = null; // 👈 Quitamos el ID del usuario anterior
+
+    // Reseteamos el formulario a sus valores por defecto
+    this.userForm.reset({
+      role: 'EMPLOYED', // Valor inicial
+      status: true, // Usuario activo por defecto
+    });
+
+    // Habilitamos los campos que bloqueamos en la edición (Documento y Usuario)
+    this.userForm.get('document')?.enable();
+    this.userForm.get('userName')?.enable();
+
     this.modalService.open(content, { centered: true, size: 'lg' });
   }
 
-  // Ajustado: Envía el nuevo User al Backend
-guardarNuevoUsuario() {
-  if (this.userForm.valid) {
-    // Mapeamos los campos del formulario a los nombres de la base de datos
-    const payload = {
-      ...this.userForm.value,
-      last_name: this.userForm.value.lastName,
-      user_name: this.userForm.value.userName,
-      // Los timestamps que tu DB marca como obligatorios
-      created_at: new Date().toISOString(),
-      update_at: new Date().toISOString()
-    };
+  // Metodo para guardar
+  guardarUsuario() {
+    if (this.userForm.valid) {
+      // 1. Preparamos el payload con los nombres del modelo Java
+      const userData = {
+        ...this.userForm.value,
+        // Mapeo manual si tu Backend espera snake_case,
+        // aunque si usas la entidad User.java directa, prefiere los nombres del modelo.
+        updateAt: new Date().toISOString(),
+      };
 
-    this.userService.createUser(payload).subscribe({
-      next: (res) => {
-        this.cargarUsuarios(); 
-        this.modalService.dismissAll();
-        this.userForm.reset({ role: 'EMPLOYED', status: true });
-        this.cdr.detectChanges(); // Forzamos que se vea el cambio de inmediato
-      },
-      error: (err) => {
-        console.error('Error al guardar:', err);
-        alert('Error: Revisa que todos los campos obligatorios estén llenos.');
+      if (this.isEditing && this.userIdToEdit) {
+        // 🔵 MODO EDICIÓN (PUT)
+        this.userService.updateUser(this.userIdToEdit, userData).subscribe({
+          next: () => {
+            this.gestionarExitoOperacion('Usuario actualizado correctamente');
+          },
+          error: (err) => this.gestionarErrorOperacion(err),
+        });
+      } else {
+        // MODO CREACIÓN (POST)
+        const payloadNuevo = { ...userData, createdAt: new Date().toISOString() };
+        this.userService.createUser(payloadNuevo).subscribe({
+          next: () => {
+            this.gestionarExitoOperacion('Usuario creado correctamente');
+          },
+          error: (err) => this.gestionarErrorOperacion(err),
+        });
       }
-    });
+    }
   }
-}
+
+  // Funciones auxiliares para no repetir código:
+  private gestionarExitoOperacion(mensaje: string) {
+    this.cargarUsuarios();
+    this.modalService.dismissAll();
+    this.isEditing = false;
+    this.userIdToEdit = null;
+    this.userForm.reset({ role: 'EMPLOYED', status: true });
+    this.cdr.detectChanges();
+  }
+
+  private gestionarErrorOperacion(err: any) {
+    console.error('Error en la operación:', err);
+    alert('Error al procesar la solicitud. Verifica los datos.');
+  }
+
+  // Método para actualizar el Usuario
+  abrirModalEditar(user: any, content: any) {
+    this.isEditing = true;
+    this.userIdToEdit = user.id;
+
+    this.userForm.patchValue({
+      name: user.name,
+      lastName: user.lastName,
+      document: user.document,
+      userName: user.userName,
+      email: user.email,
+      role: user.role,
+      phone: user.phone,
+      status: user.status,
+    });
+
+    // Bloqueamos los campos que no deben cambiarse al editar
+    this.userForm.get('document')?.disable();
+    this.userForm.get('userName')?.disable();
+
+    this.modalService.open(content, { centered: true, size: 'lg' });
+  }
+
+  eliminarUsuario(id: number | undefined) {
+    if (!id) return;
+
+    // Confirmación profesional para evitar errores
+    if (confirm('¿Estás seguro de que deseas desactivar este usuario? (Borrado lógico)')) {
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          // Refrescamos la tabla para ver el cambio (el badge cambiará a rojo)
+          this.cargarUsuarios();
+          this.cdr.detectChanges();
+          console.log('✅ Usuario desactivado correctamente');
+        },
+        error: (err) => {
+          console.error('❌ Error al intentar eliminar:', err);
+          alert('No se pudo completar la operación. Revisa la consola.');
+        },
+      });
+    }
+  }
+
+  activarUsuario(user: User) {
+    if (confirm(`¿Deseas reactivar a ${user.name}?`)) {
+      const data = { ...user, status: true };
+      this.userService.updateUser(user.id!, data).subscribe({
+        next: () => this.cargarUsuarios(),
+        error: (err) => console.error(err),
+      });
+    }
+  }
+
   gestionarGeovalla(user: User) {
     console.log(`Configurando Geovalla para: ${user.userName}`);
   }

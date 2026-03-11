@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface User {
-  id?: number;          // Opcional si es autoincremental
+  id?: number;
   name: string;
   lastName: string;
   document: number;
@@ -13,24 +13,32 @@ export interface User {
   role: string;
   status: boolean;
   phone?: number;
-  createdAt?: string
+  createdAt?: string;
   updatedAt?: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   // Ajustado al puerto 8080 que vimos en tu consola
   private apiUrl = 'http://localhost:8081/api/users';
 
-  constructor(private http: HttpClient) { }
-// El método dice: " devolver una lista de usuarios cuando el backend responda"
+  constructor(private http: HttpClient) {}
+  // El método dice: " devolver una lista de usuarios cuando el backend responda"
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
   }
 
   createUser(user: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, user);
+  }
+
+  updateUser(id: number, user: any) {
+    return this.http.put(`${this.apiUrl}/${id}`, user);
+  }
+
+  deleteUser(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

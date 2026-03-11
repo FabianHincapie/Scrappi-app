@@ -29,7 +29,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
-            PasswordEncoder passwordEncoder, SessionService sessionService) {
+            PasswordEncoder passwordEncoder,
+            SessionService sessionService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.sessionService = sessionService;
@@ -50,52 +51,75 @@ public class UserService {
 
     public User update(long id, User userDetails) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        if (userDetails.getUserName() != null &&
-                !userDetails.getUserName().trim().isEmpty()) {
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+
+        // Corregido: Tu modelo usa .setName() en lugar de .setFirstName()
+        if (userDetails.getName() != null)
+            user.setName(userDetails.getName());
+        if (userDetails.getLastName() != null)
+            user.setLastName(userDetails.getLastName());
+
+        // Corregido: Actualización de otros campos del modelo
+        if (userDetails.getUserName() != null)
             user.setUserName(userDetails.getUserName());
-        }
-        if (userDetails.getEmail() != null &&
-                !userDetails.getEmail().trim().isEmpty()) {
+        if (userDetails.getEmail() != null)
             user.setEmail(userDetails.getEmail());
-        }
-        if (userDetails.getPassword() != null &&
-                !userDetails.getPassword().trim().isEmpty()) {
+        if (userDetails.getPhone() != null)
+            user.setPhone(userDetails.getPhone());
+        if (userDetails.getRole() != null)
+            user.setRole(userDetails.getRole());
+
+        // Si mandan password nueva, la encriptamos
+        if (userDetails.getPassword() != null && !userDetails.getPassword().trim().isEmpty()) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         }
 
-        if (userDetails.getRole() != null)
-            user.setRole(userDetails.getRole());
+        // Corregido: Tu modelo usa .isStatus() / .setStatus()
+        user.setStatus(userDetails.isStatus());
 
         return userRepository.save(user);
     }
 
-    public String login(LoginRequest request, HttpServletRequest httpRequest) {
-        String identifier = request.getIdentifier(); // 👈 Usamos el nuevo campo del DTO
-        Optional<User> optionalUser;
+    public void delete(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
 
+        // Corregido: Borrado lógico usando tu variable 'status'
+        user.setStatus(false);
+        // user.setRole(Role.INACTIVE); // Solo si tienes INACTIVE en tu Enum Role
+
+        userRepository.save(user);
+    }
+
+    public String login(LoginRequest request, HttpServletRequest httpRequest) {
+        String identifier = request.getIdentifier(); // 👈 Asegúrate que LoginRequest.java tenga 'identifier'
+
+        if (identifier == null || identifier.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El identificador es obligatorio");
+        }
+
+        Optional<User> optionalUser;
         try {
-            // Intentamos si es un número (Documento)
             Long doc = Long.parseLong(identifier);
             optionalUser = userRepository.findByDocument(doc);
-
             if (optionalUser.isEmpty()) {
                 optionalUser = userRepository.findByUserName(identifier);
             }
         } catch (NumberFormatException e) {
-            // Si no es número, es un username
             optionalUser = userRepository.findByUserName(identifier);
         }
 
         User user = optionalUser
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
 
-        // Comparación segura con BCrypt
+        if (!user.isStatus()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario desactivado");
+        }
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Contraseña incorrecta");
         }
 
-        // Registro de auditoría
         sessionService.createLoginSession(user.getId(), httpRequest.getRemoteAddr(),
                 httpRequest.getHeader("User-Agent"));
 
