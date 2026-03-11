@@ -22,7 +22,7 @@ export interface User {
 })
 export class UserService {
   // Ajustado al puerto 8080 que vimos en tu consola
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = 'http://localhost:8081/api/users';
 
   constructor(private http: HttpClient) { }
 // El método dice: " devolver una lista de usuarios cuando el backend responda"

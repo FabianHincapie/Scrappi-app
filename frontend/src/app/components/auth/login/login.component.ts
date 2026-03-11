@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
     // 3. Llamamos al endpoint de Login real
     // Usamos { responseType: 'text' } porque el Java devuelve un String plano
     this.http
-      .post('http://localhost:8080/api/users/login', loginRequest, { responseType: 'text' })
+      .post('http://localhost:8081/api/users/login', loginRequest, { responseType: 'text' })
       .subscribe({
         next: (response) => {
           // Si el Backend responde "Login correcto", procedemos
