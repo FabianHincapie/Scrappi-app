@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { Chart, registerables } from 'chart.js';
 
 import { AuthService } from '../../../services/auth/auth.service';
+import { environment } from '../../../../environments/environment';
 
 Chart.register(...registerables);
 
@@ -65,7 +66,7 @@ export class HomeDashboardComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   cargarResumen(userId: number) {
-    this.http.get<any>(`http://localhost:8080/api/worklogs/summary/${userId}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/worklogs/summary/${userId}`).subscribe({
       next: (data) => {
         this.lastEvent = data.lastEvent || 'Sin registros';
         this.locationStatus = data.locationStatus || 'Desconocido';

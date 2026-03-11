@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 export interface User {
   id?: number;
   name: string;
@@ -22,23 +22,26 @@ export interface User {
 })
 export class UserService {
   // Ajustado al puerto 8080 que vimos en tu consola
-  private apiUrl = 'http://localhost:8081/api/users';
+  private readonly API_URL = `${environment.apiUrl}/users`;
 
+  login(data: any) {
+    return this.http.post(`${this.API_URL}/login`, data);
+  }
   constructor(private http: HttpClient) {}
   // El método dice: " devolver una lista de usuarios cuando el backend responda"
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+    return this.http.get<User[]>(this.API_URL);
   }
 
   createUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user);
+    return this.http.post<User>(this.API_URL, user);
   }
 
   updateUser(id: number, user: any) {
-    return this.http.put(`${this.apiUrl}/${id}`, user);
+    return this.http.put(`${this.API_URL}/${id}`, user);
   }
 
   deleteUser(id: number) {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.API_URL}/${id}`);
   }
 }

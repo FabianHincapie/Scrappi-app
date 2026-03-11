@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
+
+
 @Injectable({
   providedIn: 'root',
 })
 export class WorklogService {
-  private apiUrl = 'http://localhost:8081/api/worklogs';
+  private apiUrl =`${environment.apiUrl}/worklogs`;
 
   constructor(private http: HttpClient) {}
 
@@ -33,6 +36,6 @@ export class WorklogService {
 
   // Obtener datos de la oficina (Geovalla)
   obtenerConfiguracionEstacion(id: number): Observable<any> {
-    return this.http.get(`http://localhost:8081/api/workstation/${id}`);
+    return this.http.get(`${environment.apiUrl}/workstation/${id}`);
   }
 }

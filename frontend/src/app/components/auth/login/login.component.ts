@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user/user.service'; // 👈 Necesario para validar en DB
 import { AuthService } from '../../../services/auth/auth.service'; // 👈 Necesario para guardar sesión
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -59,7 +60,7 @@ export class LoginComponent implements OnInit {
     };
 
     // AJUSTE 3: Eliminamos responseType: 'text' y procesamos el JSON directo
-    this.http.post<any>('http://localhost:8080/api/users/login', loginRequest).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/users/login`, loginRequest).subscribe({
       next: (user) => {
         if (user && user.role) {
           this.loginExitoso = `¡Excelente: ¡Hola ${user.name}! Entrando a ScrAppi...`;
